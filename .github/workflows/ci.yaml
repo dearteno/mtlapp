@@ -35,10 +35,7 @@ jobs:
       - 
         name: Get smart tag
         id: prepare
-        uses: Surgo/docker-smart-tag-action@v1
-        with:
-         docker_image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}   
-      
+        uses: Surgo/docker-smart-tag-action@v1      
       - 
         name: Extract metadata (tags, labels) for Docker
         id: meta
