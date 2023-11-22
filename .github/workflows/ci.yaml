@@ -55,7 +55,7 @@ jobs:
   update-helm:
      needs: build-and-push-image
      runs-on: ubuntu-latest   
-     step:
+     steps:
       - 
         name: debug2
         #uses: mikefarah/yq@master
