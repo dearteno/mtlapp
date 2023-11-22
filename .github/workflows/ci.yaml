@@ -46,23 +46,22 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}     
+          tags:  ${GITHUB_SHA::7}
+          labels: ${{ steps.meta.outputs.labels }}   
+            
       - name: Step
-        run: echo ${GITHUB_SHA::8}
+        run: echo ${GITHUB_SHA::7}
       - 
         name: Check out helm repo #uses: mikefarah/yq@master
         uses: actions/checkout@v3
         with:
           repository: dearteno/mtlchart
           token: "${{ secrets.PAT }}"   
-      - name: ls
-        run: "ls -lah"
       -
        name: update helm
        uses: mikefarah/yq@master
        with:
-        cmd: yq -i '.image.repository = "${{ steps.meta.outputs.tags }}"' 'stable/values.yaml'    
+        cmd: yq -i '.image.tag = " ${GITHUB_SHA::7}"' 'stable/values.yaml'    
 
       - name: Commit and push changes
         run: |
