@@ -39,7 +39,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}     
           tags: |
-              type=sha,format=short
+              type=sha,format=short,prefix=
       -
         name: Build and push
         uses: docker/build-push-action@v5
@@ -48,6 +48,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}     
+      - name: Step
+        run: echo ${GITHUB_SHA::8}
       - 
         name: Check out helm repo #uses: mikefarah/yq@master
         uses: actions/checkout@v3
