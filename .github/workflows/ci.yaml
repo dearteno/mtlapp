@@ -54,6 +54,8 @@ jobs:
         with:
           repository: dearteno/mtlchart
           token: "${{ secrets.PAT }}"   
+      - name: ls
+        run: "ls -lah"
       -
        name: update helm
        uses: mikefarah/yq@master
