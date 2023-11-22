@@ -60,7 +60,7 @@ jobs:
        name: update helm
        uses: mikefarah/yq@master
        with:
-        cmd: yq -i '.image.tag = "${{ steps.meta.outputs.tags }}"' 'mtlchart/values.yaml'    
+        cmd: yq -i '.image.tag = "${{ steps.meta.outputs.tags }}"' 'values.yaml'    
 
       - name: Commit and push changes
         run: |
