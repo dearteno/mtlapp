@@ -37,15 +37,17 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}     
+          tags: |
+              type=sha,format=short,prefix=
       -
         name: Build and push
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: ${GITHUB_SHA::7}
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}    
       - 
         name: Publish
-        run: echo ${GITHUB_SHA::7}
+        run: echo ${{ steps.meta.outputs.tags }}
 
