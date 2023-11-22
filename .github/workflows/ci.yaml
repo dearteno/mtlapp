@@ -43,5 +43,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{GITHUB_SHA}}
+          tags: ${{env.GITHUB_SHA}}
           labels: ${{ steps.meta.outputs.labels }}      
