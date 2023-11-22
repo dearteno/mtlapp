@@ -47,13 +47,25 @@ jobs:
           context: .
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-  update-helm:
-     needs: build-and-push-image
-     runs-on: ubuntu-latest   
-     steps:
+          labels: ${{ steps.meta.outputs.labels }}     
       - 
-        name: debug2
-        #uses: mikefarah/yq@master
-        run: echo ${{ needs.build-and-push-image.steps.meta.outputs.labels }}
+        name: Check out helm repo #uses: mikefarah/yq@master
+        uses: actions/checkout@v3
+        with:
+          repository: dearteno/mtlchart
+          token: "${{ secrets.PAT }}"   
+      -
+       name: update helm
+       uses: mikefarah/yq@master
+       with:
+        cmd: yq -i '.image.tag = "${{ steps.meta.outputs.tags }}"' 'mtlchart/values.yaml'    
+
+      - name: Commit and push changes
+        run: |
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git config user.name "${{ github.actor }}"
+
+          git commit -am "update image tag ${{ steps.meta.outputs.tags }}"
+          git push        
+
 
