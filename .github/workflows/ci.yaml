@@ -16,6 +16,8 @@ env:
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
+    outputs:
+     tags: ${{ steps.meta.outputs.tags }}
     steps:
       -
         name: Checkout
@@ -48,9 +50,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}    
-      - 
-        outputs: debug
-         tags: ${{ steps.meta.outputs.tags }}
+       
+
   
   update-helm:
      needs: build-and-push-image
