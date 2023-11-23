@@ -11,7 +11,7 @@ env:
   REGISTRY: docker.io
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
-
+  SHA7: ${GITHUB_SHA::7}
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
@@ -30,12 +30,7 @@ jobs:
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      
-      - 
-        name: Get smart tag
-        id: prepare
-        uses: Surgo/docker-smart-tag-action@v1      
+          password: ${{ secrets.DOCKERHUB_TOKEN }}  
       - 
         name: Extract metadata (tags, labels) for Docker
         id: meta
@@ -50,11 +45,11 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ steps.prepare.outputs.tag }}
+          tags: $SHA7
           labels: ${{ steps.meta.outputs.labels }}   
 
       - name: Step
-        run: echo ${{ steps.prepare.outputs.tag }}
+        run: echo $SHA7
       - 
         name: Check out helm repo 
         uses: actions/checkout@v3
@@ -65,14 +60,14 @@ jobs:
        name: update helm
        uses: mikefarah/yq@master
        with:
-        cmd: yq -i '.image.tag = "${{ steps.prepare.outputs.tag }}"' 'stable/values.yaml'    
+        cmd: yq -i '.image.tag = "$SHA7"' 'stable/values.yaml'    
 
       - name: Commit and push changes
         run: |
           git config user.email "${{ github.actor }}@users.noreply.github.com"
           git config user.name "${{ github.actor }}"
 
-          git commit -am "update image tag ${{ steps.prepare.outputs.tag }}"
+          git commit -am "update image tag $SHA7"
           git push        
 
 
