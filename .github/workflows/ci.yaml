@@ -16,9 +16,6 @@ jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
     steps:
-      
-      - name: Step
-        run: echo $SHA7
       -
         name: Checkout
         uses: actions/checkout@v3
