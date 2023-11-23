@@ -55,12 +55,12 @@ jobs:
           repository: dearteno/mtlchart
           token: "${{ secrets.PAT }}"   
       - name: ls
-        run: echo ${ GITHUB_SHA::7 }
+        run: echo ${ GITHUB_SHA:0:7 }
       -
        name: update helm
        uses: mikefarah/yq@master
        with:
-        cmd: yq -i '.image.tag = "${ GITHUB_SHA::7 }"' 'stable/values.yaml'    
+        cmd: yq -i '.image.tag = "${ GITHUB_SHA:0:7 }"' 'stable/values.yaml'    
 
       - name: Commit and push changes
         run: |
