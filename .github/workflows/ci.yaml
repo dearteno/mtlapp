@@ -11,7 +11,7 @@ env:
   REGISTRY: docker.io
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
-  SHA7: ${GITHUB_SHA::7}
+  IMAGE_TAG: "edge"
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
@@ -48,7 +48,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: $SHA7
+          tags: ${{ env.IMAGE_TAG }}
           labels: ${{ steps.meta.outputs.labels }}   
       - 
         name: Check out helm repo 
@@ -60,7 +60,7 @@ jobs:
        name: update helm
        uses: mikefarah/yq@master
        with:
-        cmd: yq -i '.image.tag = "$SHA7"' 'stable/values.yaml'    
+        cmd: yq -i '.image.tag = "${{ env.IMAGE_TAG }}"' 'stable/values.yaml'    
 
       - name: Commit and push changes
         run: |
