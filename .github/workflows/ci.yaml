@@ -11,7 +11,8 @@ env:
   REGISTRY: docker.io
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
-  IMAGE_TAG: "edge"
+  IMAGE_TAG: latest
+
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
@@ -30,7 +31,7 @@ jobs:
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}  
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - 
         name: Extract metadata (tags, labels) for Docker
         id: meta
@@ -45,26 +46,28 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ env.IMAGE_TAG }}
-          labels: ${{ steps.meta.outputs.labels }}   
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}     
       - 
-        name: Check out helm repo 
+        name: Check out helm repo #uses: mikefarah/yq@master
         uses: actions/checkout@v3
         with:
           repository: dearteno/mtlchart
           token: "${{ secrets.PAT }}"   
+      - name: ls
+        run: "ls -lah"
       -
        name: update helm
        uses: mikefarah/yq@master
        with:
-        cmd: yq -i '.image.tag = "${{ env.IMAGE_TAG }}"' 'stable/values.yaml'    
+        cmd: yq -i '.image.tag = "${GITHUB_SHA::7}"' 'stable/values.yaml'    
 
       - name: Commit and push changes
         run: |
           git config user.email "${{ github.actor }}@users.noreply.github.com"
           git config user.name "${{ github.actor }}"
 
-          git commit -am "update image tag $SHA7"
+          git commit -am "update image tag ${{ steps.meta.outputs.tags }}"
           git push        
 
 
